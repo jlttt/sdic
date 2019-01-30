@@ -3,7 +3,9 @@
 require dirname(__FILE__) . '/../vendor/autoload.php';
 
 $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-$container->set('http_client', new Http\Adapter\Guzzle6\Client());
+
+$httpClientDefinition = new \Symfony\Component\DependencyInjection\Definition(\Http\Adapter\Guzzle6\Client::class);
+$container->setDefinition('http_client', $httpClientDefinition);
 
 $deploy = new \Ubi\Deploy\Deploy(
     new \Ubi\Deploy\Service\CloudProvider($container->get('http_client')),
