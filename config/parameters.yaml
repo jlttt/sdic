@@ -1,0 +1,4 @@
+parameters:
+    allowed_slugs: ['dev', 'preprod']
+    allowed_versions: ['2.62', '2.61']
+

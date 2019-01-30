@@ -1,0 +1,21 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+        bind:
+            $allowedSlugs: "%allowed_slugs%"
+            $allowedVersions: "%allowed_versions%"
+
+    Ubi\Deploy\:
+        resource: '../src/*'
+
+    Http\Client\HttpClient:
+        class: Http\Adapter\Guzzle6\Client
+
+    Ubi\Deploy\Deploy:
+        public: true
+
+    _instanceof:
+        Ubi\Deploy\Service\Filter:
+            tags: ['ubi.deploy.filter']

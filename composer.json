@@ -1,0 +1,14 @@
+{
+    "require": {
+        "symfony/dependency-injection": "^4.2",
+        "php-http/guzzle6-adapter": "^2.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.2"
+    },
+    "autoload": {
+          "psr-4": {
+              "Ubi\\Deploy\\": "src/"
+          }
+      }
+}
