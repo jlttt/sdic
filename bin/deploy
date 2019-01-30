@@ -16,9 +16,11 @@ $container = new ContainerBuilder();
 $container->setDefinition('http_client', new Definition(Client::class));
 $container->register('cloud_provider', CloudProvider::class)
     ->addArgument(new Reference('http_client'));
+$container->register('jenkins_manager', JenkinsManager::class)
+    ->addArgument(new Reference('http_client'));
+$container->register('deploy', Deploy::class)
+    ->addArgument(new Reference('cloud_provider'))
+    ->addArgument(new Reference('jenkins_manager'));
 
-$deploy = new Deploy(
-    $container->get('cloud_provider'),
-    new JenkinsManager($container->get('http_client'))
-);
-return $deploy->run();
+dump($container);
+return $container->get('deploy')->run();
