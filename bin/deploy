@@ -9,11 +9,14 @@ use Ubi\Deploy\Service\JenkinsManager;
 use Http\Adapter\Guzzle6\Client;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 $container = new ContainerBuilder();
 
 $container->setDefinition('http_client', new Definition(Client::class));
-$container->setDefinition('cloud_provider', new Definition(CloudProvider::class));
+$cloudProviderDefinition = new Definition(CloudProvider::class);
+$cloudProviderDefinition->addArgument(new Reference('http_client'));
+$container->setDefinition('cloud_provider', $cloudProviderDefinition);
 
 $deploy = new Deploy(
     $container->get('cloud_provider'),
