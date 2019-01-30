@@ -2,13 +2,21 @@
 <?php
 require dirname(__FILE__) . '/../vendor/autoload.php';
 
-$container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+use Ubi\Deploy\Deploy;
+use Ubi\Deploy\Service\CloudProvider;
+use Ubi\Deploy\Service\JenkinsManager;
 
-$httpClientDefinition = new \Symfony\Component\DependencyInjection\Definition(\Http\Adapter\Guzzle6\Client::class);
-$container->setDefinition('http_client', $httpClientDefinition);
+use Http\Adapter\Guzzle6\Client;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
-$deploy = new \Ubi\Deploy\Deploy(
-    new \Ubi\Deploy\Service\CloudProvider($container->get('http_client')),
-    new \Ubi\Deploy\Service\JenkinsManager($container->get('http_client'))
+$container = new ContainerBuilder();
+
+$container->setDefinition('http_client', new Definition(Client::class));
+$container->setDefinition('cloud_provider', new Definition(CloudProvider::class));
+
+$deploy = new Deploy(
+    $container->get('cloud_provider'),
+    new JenkinsManager($container->get('http_client'))
 );
 return $deploy->run();
