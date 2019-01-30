@@ -14,9 +14,8 @@ use Symfony\Component\DependencyInjection\Reference;
 $container = new ContainerBuilder();
 
 $container->setDefinition('http_client', new Definition(Client::class));
-$cloudProviderDefinition = new Definition(CloudProvider::class);
-$cloudProviderDefinition->addArgument(new Reference('http_client'));
-$container->setDefinition('cloud_provider', $cloudProviderDefinition);
+$container->register('cloud_provider', CloudProvider::class)
+    ->addArgument(new Reference('http_client'));
 
 $deploy = new Deploy(
     $container->get('cloud_provider'),
