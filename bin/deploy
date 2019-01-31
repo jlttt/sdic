@@ -16,7 +16,4 @@ $loader->load('config.php');
 $loader->load('parameters.php');
 $container->compile();
 
-$deploy = $container->get(Deploy::class);
-$deploy->addFilter($container->get(SlugFilter::class));
-$deploy->addFilter($container->get(VersionFilter::class));
 return $container->get(Deploy::class)->run();
