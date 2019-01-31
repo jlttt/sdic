@@ -5,6 +5,7 @@ require dirname(__FILE__) . '/../vendor/autoload.php';
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
 use Ubi\Deploy\Deploy;
 use Ubi\Deploy\DependencyInjection\FilterPass;
@@ -17,5 +18,8 @@ $loader->load('parameters.yaml');
 $loader->load('config.yaml');
 
 $container->compile();
+
+$dumper = new PhpDumper($container);
+file_put_contents(__DIR__  . '/../var/cache/CachedContainer.php', $dumper->dump(['class' => 'CachedContainer']));
 
 return $container->get(Deploy::class)->run();
