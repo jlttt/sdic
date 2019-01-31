@@ -4,17 +4,18 @@ require dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 use Ubi\Deploy\Deploy;
 use Ubi\Deploy\DependencyInjection\FilterPass;
 
 $container = new ContainerBuilder();
 $container->addCompilerPass(new FilterPass());
-$loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../config'));
-$loader->load('parameters.php');
-$loader->load('config.php');
+
+$loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
+$loader->load('parameters.yaml');
+$loader->load('config.yaml');
 
 $container->compile();
-//dump($container->get(Deploy::class));
+
 return $container->get(Deploy::class)->run();
