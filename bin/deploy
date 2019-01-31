@@ -3,24 +3,23 @@
 require dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 use Http\Adapter\Guzzle6\Client;
+use Http\Client\HttpClient;
 
 use Ubi\Deploy\Deploy;
 use Ubi\Deploy\Service\CloudProvider;
 use Ubi\Deploy\Service\JenkinsManager;
 
-
 $container = new ContainerBuilder();
 
-$container->register('http_client', Client::class);
+$container->register(HttpClient::class, Client::class);
 $container->register(CloudProvider::class, CloudProvider::class)
-    ->addArgument(new Reference('http_client'));
+    ->setAutowired(true);
 $container->register(JenkinsManager::class, JenkinsManager::class)
-    ->addArgument(new Reference('http_client'));
-$container->register('deploy', Deploy::class)
+    ->setAutowired(true);
+$container->register(Deploy::class, Deploy::class)
     ->setAutowired(true)
     ->setPublic(true);
 $container->compile();
-return $container->get('deploy')->run();
+return $container->get(Deploy::class)->run();
