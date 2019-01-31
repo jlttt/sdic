@@ -2,24 +2,27 @@
 <?php
 require dirname(__FILE__) . '/../vendor/autoload.php';
 
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 use Http\Adapter\Guzzle6\Client;
 use Http\Client\HttpClient;
 
 use Ubi\Deploy\Deploy;
-use Ubi\Deploy\Service\CloudProvider;
-use Ubi\Deploy\Service\JenkinsManager;
 
 $container = new ContainerBuilder();
+$loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../config'));
+
+$definition = new Definition();
+$definition->setAutowired(true);
+
+$loader->registerClasses($definition, 'Ubi\\Deploy\\', __DIR__ . '/../src/');
 
 $container->register(HttpClient::class, Client::class);
-$container->register(CloudProvider::class, CloudProvider::class)
-    ->setAutowired(true);
-$container->register(JenkinsManager::class, JenkinsManager::class)
-    ->setAutowired(true);
-$container->register(Deploy::class, Deploy::class)
-    ->setAutowired(true)
+$container->getDefinition(Deploy::class)
     ->setPublic(true);
 $container->compile();
+
 return $container->get(Deploy::class)->run();
