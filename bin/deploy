@@ -2,25 +2,25 @@
 <?php
 require dirname(__FILE__) . '/../vendor/autoload.php';
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+
+use Http\Adapter\Guzzle6\Client;
+
 use Ubi\Deploy\Deploy;
 use Ubi\Deploy\Service\CloudProvider;
 use Ubi\Deploy\Service\JenkinsManager;
 
-use Http\Adapter\Guzzle6\Client;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
 
 $container = new ContainerBuilder();
 
-$container->setDefinition('http_client', new Definition(Client::class));
-$container->register('cloud_provider', CloudProvider::class)
+$container->register('http_client', Client::class);
+$container->register(CloudProvider::class, CloudProvider::class)
     ->addArgument(new Reference('http_client'));
-$container->register('jenkins_manager', JenkinsManager::class)
+$container->register(JenkinsManager::class, JenkinsManager::class)
     ->addArgument(new Reference('http_client'));
 $container->register('deploy', Deploy::class)
-    ->addArgument(new Reference('cloud_provider'))
-    ->addArgument(new Reference('jenkins_manager'));
-
-dump($container);
+    ->setAutowired(true)
+    ->setPublic(true);
+$container->compile();
 return $container->get('deploy')->run();
