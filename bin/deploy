@@ -13,9 +13,10 @@ use Ubi\Deploy\Service\VersionFilter;
 $container = new ContainerBuilder();
 $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../config'));
 $loader->load('config.php');
+$loader->load('parameters.php');
 $container->compile();
 
 $deploy = $container->get(Deploy::class);
-$deploy->addFilter(new SlugFilter(['dev', 'preprod']));
-$deploy->addFilter(new VersionFilter(['2.62', '2.61']));
+$deploy->addFilter($container->get(SlugFilter::class));
+$deploy->addFilter($container->get(VersionFilter::class));
 return $container->get(Deploy::class)->run();
